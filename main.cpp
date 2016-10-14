@@ -1,60 +1,95 @@
+// #include <iostream>
+// #include <string>
+// #include <cctype>
+// #include <cassert>
+
+// using std::string;
+
+// class solution {
+//   public:
+//     string decodeString(const string & str) {
+//         string result;
+//         size_t i = 0;
+//         while (i < str.size() && isalpha[str[i]]) {
+//             result.append(1, str[i]);
+//             i++;
+//         }
+//         if (i < str.size()) {
+//             if (isdigit(str[i])) {
+//                 int count = atoi(str[i]);
+//                 i++;
+//                 string temp = getSubstr(str, i);
+//                 string tmp = decodeString(temp);
+//                 while (count-- > 0)
+//                     result.append(tmp);
+//                 i += temp.size()+2;
+//                 result.append(decodeString(str.substr(i)));
+//             }
+//         }
+        
+//         return result;
+//     }
+
+//   private:
+//     string getSubstr(const string & str, size_t start) {
+//         assert(str[start] == '[');
+
+//         string result;
+//         size_t count = 1, i = start+1;
+//         while (i < str.size()) {
+//             if (count > 0) {
+//                 result.append(1, str[i]);
+//                 if (str[i] == '[')
+//                     count++;
+//                 else if (str[i] == ']')
+//                     count--;
+//                 i++;
+//             }
+//             else
+//                 break;
+//         }
+//         result.pop_back();
+//         return result;
+//     }
+// };
+
 #include <iostream>
+#include <vector>
 #include <string>
-#include <cctype>
-#include <cassert>
+#include <regex>
 
 using std::string;
+using std::vector;
 
 class solution {
   public:
-    string decodeString(const string & str) {
-        string result;
-        size_t i = 0;
-        while (i < str.size() && isalpha[str[i]]) {
-            result.append(1, str[i]);
-            i++;
-        }
-        if (i < str.size()) {
-            if (isdigit(str[i])) {
-                int count = atoi(str[i]);
-                i++;
-                string temp = getSubstr(str, i);
-                string tmp = decodeString(temp);
-                while (count-- > 0)
-                    result.append(tmp);
-                i += temp.size()+2;
-                result.append(decodeString(str.substr(i)));
-            }
-        }
-        
-        return result;
+    string decodeString(const string & s) {
+        auto temp = split(s);
+        return temp[0];
     }
 
   private:
-    string getSubstr(const string & str, size_t start) {
-        assert(str[start] == '[');
+    vector<string> split(const string & s) {
+        string str = s;
+        vector<string> result;
+        std::smatch m;
+        std::regex exp("\\d\\[.*\\]");
 
-        string result;
-        size_t count = 1, i = start+1;
-        while (i < str.size()) {
-            if (count > 0) {
-                result.append(1, str[i]);
-                if (str[i] == '[')
-                    count++;
-                else if (str[i] == ']')
-                    count--;
-                i++;
+        while (std::regex_search(str, m, exp)) {
+            for (auto x : m) {
+                result.push_back(x);
+                std::cout << x << " ";
             }
-            else
-                break;
+            std::cout << std::endl;
+            str = m.suffix().str();
         }
-        result.pop_back();
+        
         return result;
     }
 };
 
 int main() {
-    string s{"3[a]2[bc]"};
+    string s{"a3[d4[a]b5[c]]2[bc]"};
 
     solution soln;
     string decoded = soln.decodeString(s);
